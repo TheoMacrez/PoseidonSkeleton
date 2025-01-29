@@ -11,9 +11,16 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+
     private String moodysRating;
+
+
     private String sandPRating;
+
+
     private String fitchRating;
+
+
     private Integer orderNumber;
 
 }

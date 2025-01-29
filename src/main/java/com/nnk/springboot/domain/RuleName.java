@@ -11,11 +11,22 @@ public class RuleName {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+
     private String name;
+
+
     private String description;
+
+
     private String json;
+
+
     private String template;
+
+
     private String sqlStr;
+
+
     private String sqlPart;
 
 }

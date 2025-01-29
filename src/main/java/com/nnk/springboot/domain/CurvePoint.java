@@ -14,14 +14,19 @@ public class CurvePoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+
     private Integer curveId;
+
     private Timestamp asOfDate;
+
 
     @Digits(integer=10, fraction=2)
     private Double term;
 
+
     @Digits(integer=10, fraction=2)
     private Double value;
+
 
     private Timestamp creationDate;
 
