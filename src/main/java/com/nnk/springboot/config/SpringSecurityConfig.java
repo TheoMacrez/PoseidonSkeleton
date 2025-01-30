@@ -26,7 +26,8 @@ public class SpringSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/app/login")
-                        .successHandler(customAuthenticationSuccessHandler())
+                        /*.successHandler(customAuthenticationSuccessHandler())*/
+                        .defaultSuccessUrl("/")
                         .permitAll()
                 )
                 .logout(logout -> logout

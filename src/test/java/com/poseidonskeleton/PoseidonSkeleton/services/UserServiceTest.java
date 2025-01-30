@@ -39,10 +39,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testCreateUser() {
+    public void testSaveUser() {
         when(userRepository.save(any(UserDomain.class))).thenReturn(user);
 
-        UserDomain createdUser = userService.createUser(user);
+        UserDomain createdUser = userService.saveUser(user);
 
         assertThat(createdUser).isEqualTo(user);
         verify(userRepository, times(1)).save(user);

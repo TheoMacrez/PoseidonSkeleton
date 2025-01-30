@@ -29,9 +29,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (isAdmin) {
             return "/admin/home"; // Redirige vers la page d'accueil admin
         } else if (isUser) {
-            return "/"; // Redirige vers la liste des utilisateurs
+            return "/"; // Redirige vers la page d'accueil utilisateur
         } else {
-            return "/"; // Redirige vers la page d'accueil par défaut
+            return "/app/login?error"; // Redirige vers la page de connexion avec une erreur
         }
     }
+
 }

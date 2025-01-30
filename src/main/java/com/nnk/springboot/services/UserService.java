@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -30,8 +35,17 @@ public class UserService implements UserDetailsService {
                 .build()).orElse(null);
     }
 
-    // Create
-    public UserDomain createUser(UserDomain user) {
+
+
+    // Create and save
+    @Transactional
+    public UserDomain saveUser(UserDomain user) {
+        // Validation pour s'assurer que l'utilisateur n'existe pas déjà
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("Cet Username est déjà utilisé !");
+        }
+        // Hachage du mot de passe avant de le sauvegarder
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
