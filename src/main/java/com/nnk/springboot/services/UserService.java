@@ -23,12 +23,18 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private PasswordValidationService passwordValidationService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserDomain> userByLogin = userRepository.findByUsername(username);
         if (userByLogin.isEmpty()) {
             throw new UsernameNotFoundException("Utilisateur non trouvé avec le nom d'utilisateur " + username);
         }
+
+
+
         return userByLogin.map(userModel -> User.builder()
                 .username(userModel.getUsername())
                 .password(userModel.getPassword())
@@ -43,6 +49,10 @@ public class UserService implements UserDetailsService {
         // Validation pour s'assurer que l'utilisateur n'existe pas déjà
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Cet Username est déjà utilisé !");
+        }
+        // Validation du mot de passe
+        if (!passwordValidationService.isValid(user.getPassword())) {
+            throw new RuntimeException("Le mot de passe ne respecte pas les critères requis : au moins 8 caractères, une majuscule, un chiffre et un symbole.");
         }
         // Hachage du mot de passe avant de le sauvegarder
         user.setPassword(passwordEncoder.encode(user.getPassword()));

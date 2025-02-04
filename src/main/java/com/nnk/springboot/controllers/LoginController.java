@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -15,8 +16,11 @@ public class LoginController {
     private UserRepository userRepository;
 
     @GetMapping("login")
-    public ModelAndView login() {
+    public ModelAndView login(@RequestParam(value = "expired", required = false) String expired) {
         ModelAndView mav = new ModelAndView();
+        if (expired != null && expired.equals("true")) {
+            mav.addObject("errorMsg", "Votre session a expiré. Veuillez vous reconnecter.");
+        }
         mav.setViewName("login");
         return mav;
     }
@@ -37,4 +41,6 @@ public class LoginController {
         mav.setViewName("403");
         return mav;
     }
+
+
 }
