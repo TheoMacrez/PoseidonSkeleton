@@ -18,8 +18,16 @@ import com.nnk.springboot.services.UserService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
+    private final CustomAuthenticationProvider customAuthenticationProvider;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private CustomAuthenticationProvider customAuthenticationProvider;
+    public SpringSecurityConfig(CustomAuthenticationProvider customAuthenticationProvider, UserService userService, PasswordEncoder passwordEncoder) {
+        this.customAuthenticationProvider = customAuthenticationProvider;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(UserService userService, PasswordEncoder passwordEncoder, HttpSecurity http) throws Exception {
@@ -27,7 +35,8 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/app/login").permitAll()
-                        .requestMatchers("/user/add", "/user/update/**", "/user/delete/**").hasRole("ADMIN") // Accès ADMIN
+                        .requestMatchers("/user/list","/user/add", "/user/update/**", "/user/delete/**").permitAll()
+                        //.requestMatchers("/user/add", "/user/update/**", "/user/delete/**").hasRole("ADMIN") // Accès ADMIN
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -48,7 +57,7 @@ public class SpringSecurityConfig {
                         .maxSessionsPreventsLogin(false) // Permet une nouvelle connexion après expiration
                 )
 
-                .authenticationManager(authenticationManager(userService,http,passwordEncoder))
+                .authenticationManager(authenticationManager(http))
 
                 .authenticationProvider(customAuthenticationProvider);
 
@@ -60,7 +69,7 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(UserService userService, HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();

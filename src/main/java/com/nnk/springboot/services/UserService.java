@@ -2,6 +2,7 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.UserDomain;
 import com.nnk.springboot.repositories.UserRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +16,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Getter
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordValidationService passwordValidationService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordValidationService passwordValidationService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.passwordValidationService = passwordValidationService;
+    }
 
-    @Autowired
-    private PasswordValidationService passwordValidationService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

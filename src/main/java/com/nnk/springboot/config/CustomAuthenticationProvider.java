@@ -1,6 +1,7 @@
 package com.nnk.springboot.config;
 
 import com.nnk.springboot.domain.UserDomain;
+import com.nnk.springboot.services.AuthenticationService;
 import com.nnk.springboot.services.PasswordValidationService;
 import com.nnk.springboot.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private PasswordValidationService passwordValidationService;
+    private final PasswordValidationService passwordValidationService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public CustomAuthenticationProvider(PasswordValidationService passwordValidationService, AuthenticationService authenticationService) {
+        this.passwordValidationService = passwordValidationService;
+        this.authenticationService = authenticationService;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -34,19 +35,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!passwordValidationService.isValid(password)) {
             throw new AuthenticationException("Le mot de passe ne respecte pas les critères requis.") {};
         }
-
-        // Récupérer l'utilisateur depuis la base de données
-        UserDomain user = (UserDomain) userService.loadUserByUsername(username);
-
-        // Vérifier si l'utilisateur existe
-        if (user == null) {
-            throw new UsernameNotFoundException("Utilisateur non trouvé avec le nom d'utilisateur " + username);
-        }
-
-        // Vérifier le mot de passe
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Mot de passe incorrect.");
-        }
+        // Authentifier l'utilisateur
+        UserDomain user = authenticationService.authenticate(username, password);
 
         // Si tout est bon, retourner l'objet Authentication
         return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
