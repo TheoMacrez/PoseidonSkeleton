@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,15 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private UserDomain user;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new UserDomain();
+        user = new UserDomain(passwordEncoder);
         user.setId(1);
         user.setUsername("testUser");
         user.setPassword("testPassword");

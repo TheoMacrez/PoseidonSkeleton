@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +16,9 @@ import java.util.Objects;
 @Table(name = "users")
 @Data
 public class UserDomain implements UserDetails {
+
+    private final PasswordEncoder passwordEncoder;
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
@@ -82,5 +86,9 @@ public class UserDomain implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true; // L'account est activé
+    }
+
+    public void setPassword(String password) {
+        this.password = passwordEncoder.encode(password);
     }
 }
