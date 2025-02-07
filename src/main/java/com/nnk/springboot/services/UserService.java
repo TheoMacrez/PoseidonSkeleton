@@ -19,17 +19,12 @@ import java.util.Optional;
 @Getter
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final PasswordValidationService passwordValidationService;
-
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordValidationService passwordValidationService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.passwordValidationService = passwordValidationService;
-    }
-
+    private  UserRepository userRepository;
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
+    @Autowired
+    private  PasswordValidationService passwordValidationService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

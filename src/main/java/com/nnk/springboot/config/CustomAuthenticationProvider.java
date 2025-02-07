@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
+
     private final PasswordValidationService passwordValidationService;
+
     private final AuthenticationService authenticationService;
 
     @Autowired

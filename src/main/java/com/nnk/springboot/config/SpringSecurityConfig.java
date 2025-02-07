@@ -1,5 +1,7 @@
 package com.nnk.springboot.config;
 
+import com.nnk.springboot.services.AuthenticationService;
+import com.nnk.springboot.services.PasswordValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -18,16 +20,27 @@ import com.nnk.springboot.services.UserService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-    private final CustomAuthenticationProvider customAuthenticationProvider;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SpringSecurityConfig(CustomAuthenticationProvider customAuthenticationProvider, UserService userService, PasswordEncoder passwordEncoder) {
-        this.customAuthenticationProvider = customAuthenticationProvider;
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+    private  UserService userService;
+
+    @Autowired
+    private PasswordValidationService passwordValidationService;
+
+    // Méthode pour configurer AuthenticationService
+    @Bean
+    public AuthenticationService authenticationService(PasswordEncoder passwordEncoder) {
+        return new AuthenticationService(userService, passwordEncoder);
     }
+
+    // Méthode pour configurer CustomAuthenticationProvider
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider(AuthenticationService authenticationService) {
+        return new CustomAuthenticationProvider(passwordValidationService, authenticationService);
+    }
+
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(UserService userService, PasswordEncoder passwordEncoder, HttpSecurity http) throws Exception {
@@ -59,7 +72,7 @@ public class SpringSecurityConfig {
 
                 .authenticationManager(authenticationManager(http))
 
-                .authenticationProvider(customAuthenticationProvider);
+                .authenticationProvider(customAuthenticationProvider(authenticationService(passwordEncoder)));
 
                 ;
         ;
@@ -71,7 +84,7 @@ public class SpringSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
     }
 
@@ -92,4 +105,7 @@ public class SpringSecurityConfig {
 
         };
     }
+
+
+
 }
