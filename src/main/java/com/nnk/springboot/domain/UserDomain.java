@@ -50,8 +50,9 @@ public class UserDomain implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Retourne le rôle de l'utilisateur avec le préfixe "ROLE_"
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
+        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+        System.out.println("Rôles de l'utilisateur : " + authorities);
+        return authorities;
     }
 
     @Override

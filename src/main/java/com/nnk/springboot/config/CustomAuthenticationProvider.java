@@ -33,12 +33,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
 
-        // Validation du mot de passe
         if (!passwordValidationService.isValid(password)) {
-            throw new AuthenticationException("Le mot de passe ne respecte pas les critères requis.") {};
+            throw new BadCredentialsException("Le mot de passe ne respecte pas les critères requis.");
         }
         // Authentifier l'utilisateur
         UserDomain user = authenticationService.authenticate(username, password);
+
+        // Log des informations de l'utilisateur
+        System.out.println("Utilisateur authentifié : " + user.getUsername() + ", Rôle : " + user.getRole());
 
         // Si tout est bon, retourner l'objet Authentication
         return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());

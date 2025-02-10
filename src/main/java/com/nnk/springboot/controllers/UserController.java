@@ -38,15 +38,27 @@ public class UserController {
 
     @PostMapping("/user/validate")
     public String validate(@Valid UserDomain user, BindingResult result, Model model) {
-        if (!result.hasErrors()) {
-
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-            model.addAttribute("users", userRepository.findAll());
-            return "redirect:/user/list";
+        if (result.hasErrors()) {
+            System.out.println("Validation errors: " + result.getAllErrors());
+            return "user/add";
         }
-        return "user/add";
+
+        // Hachage du mot de passe
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Sauvegarde de l'utilisateur
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println("Error saving user: " + e.getMessage());
+            result.reject("error.user", "Could not save user. Please try again.");
+            return "user/add";
+        }
+
+        model.addAttribute("users", userRepository.findAll());
+        return "redirect:/user/list";
     }
+
 
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {

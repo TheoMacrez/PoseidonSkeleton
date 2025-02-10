@@ -49,7 +49,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/app/login").permitAll()
-                        .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**").permitAll()
+                        .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**","/user/validate").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
