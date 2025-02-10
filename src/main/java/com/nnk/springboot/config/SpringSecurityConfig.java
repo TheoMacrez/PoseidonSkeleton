@@ -58,7 +58,7 @@ public class SpringSecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/app/login?logout=true")
+                        .logoutSuccessUrl("/app/logout")
                         .invalidateHttpSession(true)
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"))
