@@ -13,46 +13,66 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 
+import java.util.Optional;
+
 
 @Controller
 public class BidListController {
     @Autowired
     private BidListService bidListService;
 
+
     @RequestMapping("/bidList/list")
     public String home(Model model)
     {
-        // TODO: call service find all bids to show to the view
+        model.addAttribute("bidlists", bidListService.getAllBidLists());
         return "bidList/list";
     }
 
     @GetMapping("/bidList/add")
-    public String addBidForm(BidList bid) {
+    public String addBidForm(Model model) {
+
+        model.addAttribute("bidlist",new BidList());
         return "bidList/add";
     }
 
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return bid list
-        return "bidList/add";
+
+        if (result.hasErrors()) {
+            return "bidList/add"; // Retourner au formulaire en cas d'erreur
+        }
+        bidListService.createBidList(bid);
+
+        model.addAttribute("bidlists", bidListService.getAllBidLists());
+
+        return "bidList/list";
     }
 
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get Bid by Id and to model then show to the form
-        return "bidList/update";
+        Optional<BidList> bidList = bidListService.getBidListById(id);
+        if (bidList.isPresent()) {
+            model.addAttribute("bidlist", bidList.get());
+            return "bidList/update"; // Afficher le formulaire de mise à jour
+        }
+        return "redirect:/bidList/list"; // Rediriger si le BidList n'existe pas
     }
 
     @PostMapping("/bidList/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
                              BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update Bid and return list Bid
-        return "redirect:/bidList/list";
+        if (result.hasErrors()) {
+            bidList.setBidListId(id); // Assurez-vous que l'ID est correct
+            return "bidList/update"; // Retourner au formulaire en cas d'erreur
+        }
+        bidListService.updateBidList(id, bidList); // Mettre à jour le BidList
+        return "redirect:/bidList/list"; // Rediriger vers la liste après mise à jour
     }
 
     @GetMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find Bid by Id and delete the bid, return to Bid list
+        bidListService.deleteBidList(id);
         return "redirect:/bidList/list";
     }
 }

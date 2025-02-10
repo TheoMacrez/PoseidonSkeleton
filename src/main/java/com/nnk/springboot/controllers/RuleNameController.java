@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 
+import java.util.Optional;
+
 @Controller
 public class RuleNameController {
 
@@ -20,39 +22,50 @@ public class RuleNameController {
     private RuleNameService ruleNameService;
 
     @RequestMapping("/ruleName/list")
-    public String home(Model model)
-    {
-        // TODO: find all RuleName, add to model
+    public String home(Model model) {
+        model.addAttribute("ruleNames", ruleNameService.getAllRuleNames()); // Récupérer tous les RuleNames
         return "ruleName/list";
     }
 
     @GetMapping("/ruleName/add")
-    public String addRuleForm(RuleName bid) {
+    public String addRuleForm(Model model) {
+        model.addAttribute("ruleName", new RuleName()); // Ajouter un nouvel objet RuleName au modèle
         return "ruleName/add";
     }
 
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
-        // TODO: check data valid and save to db, after saving return RuleName list
-        return "ruleName/add";
+        if (result.hasErrors()) {
+            return "ruleName/add"; // Retourner au formulaire en cas d'erreur
+        }
+        ruleNameService.createRuleName(ruleName); // Sauvegarder le RuleName
+        return "redirect:/ruleName/list"; // Rediriger vers la liste après ajout
     }
 
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        // TODO: get RuleName by Id and to model then show to the form
-        return "ruleName/update";
+        Optional<RuleName> ruleName = ruleNameService.getRuleNameById(id);
+        if (ruleName.isPresent()) {
+            model.addAttribute("ruleName", ruleName.get()); // Ajouter le RuleName au modèle
+            return "ruleName/update"; // Afficher le formulaire de mise à jour
+        }
+        return "redirect:/ruleName/list"; // Rediriger si le RuleName n'existe pas
     }
 
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
-                             BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update RuleName and return RuleName list
-        return "redirect:/ruleName/list";
+                                 BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            ruleName.setId(id); // Assurez-vous que l'ID est correct
+            return "ruleName/update"; // Retourner au formulaire en cas d'erreur
+        }
+        ruleNameService.updateRuleName(id, ruleName); // Mettre à jour le RuleName
+        return "redirect:/ruleName/list"; // Rediriger vers la liste après mise à jour
     }
 
     @GetMapping("/ruleName/delete/{id}")
-    public String deleteRuleName(@PathVariable("id") Integer id, Model model) {
-        // TODO: Find RuleName by Id and delete the RuleName, return to Rule list
-        return "redirect:/ruleName/list";
+    public String deleteRuleName(@PathVariable("id") Integer id) {
+        ruleNameService.deleteRuleName(id); // Supprimer le RuleName
+        return "redirect:/ruleName/list"; // Rediriger vers la liste après suppression
     }
 }
