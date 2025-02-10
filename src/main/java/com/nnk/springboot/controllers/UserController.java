@@ -30,9 +30,11 @@ public class UserController {
     }
 
     @GetMapping("/user/add")
-    public String addUser(UserDomain bid) {
+    public String addUser(Model model) {
+        model.addAttribute("user", new UserDomain());
         return "user/add";
     }
+
 
     @PostMapping("/user/validate")
     public String validate(@Valid UserDomain user, BindingResult result, Model model) {

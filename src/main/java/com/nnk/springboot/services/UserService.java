@@ -21,8 +21,13 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private  UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private  PasswordEncoder passwordEncoder;
+    public UserService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
     @Autowired
     private  PasswordValidationService passwordValidationService;
 

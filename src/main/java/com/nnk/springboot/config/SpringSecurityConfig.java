@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,42 +21,40 @@ import com.nnk.springboot.services.UserService;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-
-    @Autowired
-    private  UserService userService;
-
     @Autowired
     private PasswordValidationService passwordValidationService;
 
-    // Méthode pour configurer AuthenticationService
+    @Autowired
+    @Lazy
+    private UserService userService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     public AuthenticationService authenticationService(PasswordEncoder passwordEncoder) {
         return new AuthenticationService(userService, passwordEncoder);
     }
 
-    // Méthode pour configurer CustomAuthenticationProvider
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider(AuthenticationService authenticationService) {
         return new CustomAuthenticationProvider(passwordValidationService, authenticationService);
     }
 
-
-
-
     @Bean
-    public SecurityFilterChain securityFilterChain(UserService userService, PasswordEncoder passwordEncoder, HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/app/login").permitAll()
-                        .requestMatchers("/user/list","/user/add", "/user/update/**", "/user/delete/**").permitAll()
-                        //.requestMatchers("/user/add", "/user/update/**", "/user/delete/**").hasRole("ADMIN") // Accès ADMIN
+                        .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/app/login")
                         .successHandler(customAuthenticationSuccessHandler())
-                        /*.defaultSuccessUrl("/")*/
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -64,19 +63,13 @@ public class SpringSecurityConfig {
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"))
                 .sessionManagement(session -> session
-                        .sessionFixation().migrateSession() // Protège contre les attaques de fixation de session
-                        .maximumSessions(1) // Limite à une session par utilisateur
-                        .expiredUrl("/app/login?expired=true") // Redirige vers la page de connexion en cas d'expiration
-                        .maxSessionsPreventsLogin(false) // Permet une nouvelle connexion après expiration
+                        .sessionFixation().migrateSession()
+                        .maximumSessions(1)
+                        .expiredUrl("/app/login?expired=true")
+                        .maxSessionsPreventsLogin(false)
                 )
-
                 .authenticationManager(authenticationManager(http))
-
-                .authenticationProvider(customAuthenticationProvider(authenticationService(passwordEncoder)));
-
-                ;
-        ;
-
+                .authenticationProvider(customAuthenticationProvider(authenticationService(passwordEncoder())));
 
         return http.build();
     }
@@ -89,23 +82,16 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return new CustomAuthenticationSuccessHandler();
     }
+
     @Bean
     public ServletContextInitializer cookieConfig() {
         return servletContext -> {
-            servletContext.getSessionCookieConfig().setHttpOnly(true); // Empêche l'accès JavaScript
-            servletContext.getSessionCookieConfig().setSecure(true); // Utilise HTTPS uniquement
-
+            servletContext.getSessionCookieConfig().setHttpOnly(true);
+            servletContext.getSessionCookieConfig().setSecure(true);
         };
     }
-
-
-
 }
+
