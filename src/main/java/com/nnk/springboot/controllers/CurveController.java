@@ -2,7 +2,10 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.services.CurvePointService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +24,11 @@ public class CurveController {
     private CurvePointService curvePointService;
 
     @RequestMapping("/curvePoint/list")
-    public String home(Model model) {
+    public String home(Model model,@AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("curvePoints", curvePointService.getAllCurvePoints()); // Récupérer tous les Curve Points
+        if (userDetails != null) {
+            model.addAttribute("loggedInUser", userDetails.getUsername());
+        }
         return "curvePoint/list";
     }
 

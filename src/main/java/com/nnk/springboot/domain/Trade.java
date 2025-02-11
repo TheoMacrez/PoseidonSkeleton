@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
@@ -22,16 +23,16 @@ public class Trade {
     private String type;
 
     @Digits(integer=10, fraction=2, message = "Buy Quantity must be a valid number")
-    private Double buyQuantity;
+    private BigDecimal buyQuantity;
 
     @Digits(integer=10, fraction=2, message = "Sell Quantity must be a valid number")
-    private Double sellQuantity;
+    private BigDecimal sellQuantity;
 
     @Digits(integer=10, fraction=2, message = "Buy Price must be a valid number")
-    private Double buyPrice;
+    private BigDecimal buyPrice;
 
     @Digits(integer=10, fraction=2, message = "Sell Price must be a valid number")
-    private Double sellPrice;
+    private BigDecimal sellPrice;
 
     private String benchmark;
 

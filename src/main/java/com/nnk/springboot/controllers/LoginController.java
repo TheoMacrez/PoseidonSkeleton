@@ -46,7 +46,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logoutPage(Model model) {
         model.addAttribute("message", "You are disconnected.");
-        return "login"; // Assurez-vous que vous avez un template logout.html
+        return "login";
     }
 
 

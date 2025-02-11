@@ -2,7 +2,10 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +24,11 @@ public class TradeController {
     private TradeService tradeService;
 
     @RequestMapping("/trade/list")
-    public String home(Model model) {
+    public String home(Model model,@AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("trades", tradeService.getAllTrades()); // Récupérer toutes les trades
+        if (userDetails != null) {
+            model.addAttribute("loggedInUser", userDetails.getUsername());
+        }
         return "trade/list";
     }
 

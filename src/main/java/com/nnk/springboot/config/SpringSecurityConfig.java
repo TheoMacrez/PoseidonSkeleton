@@ -48,7 +48,7 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/app/login").permitAll()
+                        .requestMatchers("/app/login", "/user/create").permitAll()
                         .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**","/user/validate").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -70,6 +70,7 @@ public class SpringSecurityConfig {
                 )
                 .authenticationManager(authenticationManager(http))
                 .authenticationProvider(customAuthenticationProvider(authenticationService(passwordEncoder())));
+
 
         return http.build();
     }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
@@ -24,16 +25,17 @@ public class BidList {
 
     @NotNull(message = "Bid Quantity is mandatory")
     @Digits(integer = 10, fraction = 2, message = "Bid Quantity must be a valid number")
-    private Double bidQuantity;
+    private BigDecimal bidQuantity;
 
     @Digits(integer = 10, fraction = 2, message = "Ask Quantity must be a valid number")
-    private Double askQuantity;
+    private BigDecimal askQuantity;
 
     @Digits(integer = 10, fraction = 2, message = "Bid must be a valid number")
-    private Double bid;
+    private BigDecimal bid;
 
+    @Column(precision = 5)
     @Digits(integer = 10, fraction = 2, message = "Ask must be a valid number")
-    private Double ask;
+    private BigDecimal ask;
 
     private String benchmark;
 

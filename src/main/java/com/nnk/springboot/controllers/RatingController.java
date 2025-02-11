@@ -2,7 +2,10 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +24,11 @@ public class RatingController {
     private RatingService ratingService;
 
     @RequestMapping("/rating/list")
-    public String home(Model model) {
-        model.addAttribute("ratings", ratingService.getAllRatings()); // Récupérer toutes les évaluations
+    public String home(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        model.addAttribute("ratings", ratingService.getAllRatings());
+        if (userDetails != null) {
+            model.addAttribute("loggedInUser", userDetails.getUsername());
+        }
         return "rating/list";
     }
 
