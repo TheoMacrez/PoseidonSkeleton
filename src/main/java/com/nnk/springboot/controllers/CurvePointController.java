@@ -17,64 +17,109 @@ import jakarta.validation.Valid;
 
 import java.util.Optional;
 
+/**
+ * Controller class for handling HTTP requests related to CurvePoint entities.
+ */
 @Controller
 public class CurvePointController {
+
     @Autowired
     private CurvePointService curvePointService;
 
+    /**
+     * Handles the request to display the list of CurvePoints.
+     *
+     * @param model the Model object to add attributes.
+     * @param userDetails the details of the authenticated user.
+     * @return the view name for the CurvePoint list page.
+     */
     @RequestMapping("/curvePoint/list")
-    public String home(Model model,@AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("curvePoints", curvePointService.getAllCurvePoints()); // Récupérer tous les Curve Points
+    public String home(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
         if (userDetails != null) {
             model.addAttribute("loggedInUser", userDetails.getUsername());
         }
         return "curvePoint/list";
     }
 
+    /**
+     * Handles the request to display the form for adding a new CurvePoint.
+     *
+     * @param model the Model object to add attributes.
+     * @return the view name for the add CurvePoint form.
+     */
     @GetMapping("/curvePoint/add")
     public String addCurvePointForm(Model model) {
         CurvePoint curvePoint = new CurvePoint();
-        curvePoint.setCurveId(0); // Initialiser curveId avec une valeur par défaut
+        curvePoint.setCurveId(0); // Initialize curveId with a default value
         model.addAttribute("curvePoint", curvePoint);
         return "curvePoint/add";
     }
 
+    /**
+     * Handles the request to validate and save a new CurvePoint.
+     *
+     * @param curvePoint the CurvePoint object to validate and save.
+     * @param result the BindingResult object to handle validation errors.
+     * @param model the Model object to add attributes.
+     * @return the view name for the CurvePoint list page if successful, otherwise the add form.
+     */
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            System.out.println("Test");
-            return "curvePoint/add"; // Retourner au formulaire en cas d'erreur
+            return "curvePoint/add";
         }
         model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
-
-        curvePointService.createCurvePoint(curvePoint); // Sauvegarder le CurvePoint
-        return "redirect:/curvePoint/list"; // Rediriger vers la liste après ajout
+        curvePointService.createCurvePoint(curvePoint);
+        return "redirect:/curvePoint/list";
     }
 
+    /**
+     * Handles the request to display the form for updating an existing CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to update.
+     * @param model the Model object to add attributes.
+     * @return the view name for the update CurvePoint form if the CurvePoint exists, otherwise redirect to the list page.
+     */
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Optional<CurvePoint> curvePoint = curvePointService.getCurvePointById(id);
         if (curvePoint.isPresent()) {
-            model.addAttribute("curvePoint", curvePoint.get()); // Ajouter le CurvePoint au modèle
-            return "curvePoint/update"; // Afficher le formulaire de mise à jour
+            model.addAttribute("curvePoint", curvePoint.get());
+            return "curvePoint/update";
         }
-        return "redirect:/curvePoint/list"; // Rediriger si le CurvePoint n'existe pas
+        return "redirect:/curvePoint/list";
     }
 
+    /**
+     * Handles the request to update an existing CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to update.
+     * @param curvePoint the CurvePoint object with updated data.
+     * @param result the BindingResult object to handle validation errors.
+     * @param model the Model object to add attributes.
+     * @return the view name for the update CurvePoint form if there are errors, otherwise redirect to the list page.
+     */
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
                                    BindingResult result, Model model) {
         if (result.hasErrors()) {
-            curvePoint.setId(id); // Assurez-vous que l'ID est correct
-            return "curvePoint/update"; // Retourner au formulaire en cas d'erreur
+            curvePoint.setId(id);
+            return "curvePoint/update";
         }
-        curvePointService.updateCurvePoint(id, curvePoint); // Mettre à jour le CurvePoint
-        return "redirect:/curvePoint/list"; // Rediriger vers la liste après mise à jour
+        curvePointService.updateCurvePoint(id, curvePoint);
+        return "redirect:/curvePoint/list";
     }
 
+    /**
+     * Handles the request to delete a CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to delete.
+     * @return the view name to redirect to the CurvePoint list page.
+     */
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteCurvePoint(@PathVariable("id") Integer id) {
-        curvePointService.deleteCurvePoint(id); // Supprimer le CurvePoint
-        return "redirect:/curvePoint/list"; // Rediriger vers la liste après suppression
+        curvePointService.deleteCurvePoint(id);
+        return "redirect:/curvePoint/list";
     }
 }

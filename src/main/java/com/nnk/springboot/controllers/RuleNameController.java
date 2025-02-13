@@ -18,60 +18,106 @@ import jakarta.validation.Valid;
 
 import java.util.Optional;
 
+/**
+ * Controller class for handling HTTP requests related to RuleName entities.
+ */
 @Controller
 public class RuleNameController {
 
     @Autowired
     private RuleNameService ruleNameService;
 
+    /**
+     * Handles the request to display the list of RuleNames.
+     *
+     * @param model the Model object to add attributes.
+     * @param userDetails the details of the authenticated user.
+     * @return the view name for the RuleName list page.
+     */
     @RequestMapping("/ruleName/list")
     public String home(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("ruleNames", ruleNameService.getAllRuleNames()); // Récupérer tous les RuleNames
+        model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
         if (userDetails != null) {
             model.addAttribute("loggedInUser", userDetails.getUsername());
         }
         return "ruleName/list";
     }
 
+    /**
+     * Handles the request to display the form for adding a new RuleName.
+     *
+     * @param model the Model object to add attributes.
+     * @return the view name for the add RuleName form.
+     */
     @GetMapping("/ruleName/add")
     public String addRuleForm(Model model) {
-        model.addAttribute("ruleName", new RuleName()); // Ajouter un nouvel objet RuleName au modèle
+        model.addAttribute("ruleName", new RuleName());
         return "ruleName/add";
     }
 
+    /**
+     * Handles the request to validate and save a new RuleName.
+     *
+     * @param ruleName the RuleName object to validate and save.
+     * @param result the BindingResult object to handle validation errors.
+     * @param model the Model object to add attributes.
+     * @return the view name for the RuleName list page if successful, otherwise the add form.
+     */
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "ruleName/add"; // Retourner au formulaire en cas d'erreur
+            return "ruleName/add";
         }
-        ruleNameService.createRuleName(ruleName); // Sauvegarder le RuleName
-        return "redirect:/ruleName/list"; // Rediriger vers la liste après ajout
+        ruleNameService.createRuleName(ruleName);
+        return "redirect:/ruleName/list";
     }
 
+    /**
+     * Handles the request to display the form for updating an existing RuleName.
+     *
+     * @param id the ID of the RuleName to update.
+     * @param model the Model object to add attributes.
+     * @return the view name for the update RuleName form if the RuleName exists, otherwise redirect to the list page.
+     */
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Optional<RuleName> ruleName = ruleNameService.getRuleNameById(id);
         if (ruleName.isPresent()) {
-            model.addAttribute("ruleName", ruleName.get()); // Ajouter le RuleName au modèle
-            return "ruleName/update"; // Afficher le formulaire de mise à jour
+            model.addAttribute("ruleName", ruleName.get());
+            return "ruleName/update";
         }
-        return "redirect:/ruleName/list"; // Rediriger si le RuleName n'existe pas
+        return "redirect:/ruleName/list";
     }
 
+    /**
+     * Handles the request to update an existing RuleName.
+     *
+     * @param id the ID of the RuleName to update.
+     * @param ruleName the RuleName object with updated data.
+     * @param result the BindingResult object to handle validation errors.
+     * @param model the Model object to add attributes.
+     * @return the view name for the update RuleName form if there are errors, otherwise redirect to the list page.
+     */
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
                                  BindingResult result, Model model) {
         if (result.hasErrors()) {
-            ruleName.setId(id); // Assurez-vous que l'ID est correct
-            return "ruleName/update"; // Retourner au formulaire en cas d'erreur
+            ruleName.setId(id);
+            return "ruleName/update";
         }
-        ruleNameService.updateRuleName(id, ruleName); // Mettre à jour le RuleName
-        return "redirect:/ruleName/list"; // Rediriger vers la liste après mise à jour
+        ruleNameService.updateRuleName(id, ruleName);
+        return "redirect:/ruleName/list";
     }
 
+    /**
+     * Handles the request to delete a RuleName.
+     *
+     * @param id the ID of the RuleName to delete.
+     * @return the view name to redirect to the RuleName list page.
+     */
     @GetMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") Integer id) {
-        ruleNameService.deleteRuleName(id); // Supprimer le RuleName
-        return "redirect:/ruleName/list"; // Rediriger vers la liste après suppression
+        ruleNameService.deleteRuleName(id);
+        return "redirect:/ruleName/list";
     }
 }

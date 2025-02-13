@@ -8,38 +8,64 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for handling business logic related to BidList entities.
+ */
 @Service
 public class BidListService {
 
     @Autowired
     private BidListRepository bidListRepository;
 
-    // Create
+    /**
+     * Creates a new BidList.
+     *
+     * @param bidList the BidList object to create.
+     * @return the created BidList object.
+     */
     public BidList createBidList(BidList bidList) {
         return bidListRepository.save(bidList);
     }
 
-    // Read all
+    /**
+     * Retrieves all BidLists.
+     *
+     * @return a list of all BidLists.
+     */
     public List<BidList> getAllBidLists() {
         return bidListRepository.findAll();
     }
 
-    // Read by ID
+    /**
+     * Retrieves a BidList by its ID.
+     *
+     * @param id the ID of the BidList to retrieve.
+     * @return an Optional containing the BidList if found, otherwise empty.
+     */
     public Optional<BidList> getBidListById(Integer id) {
         return bidListRepository.findById(id);
     }
 
-    // Update
+    /**
+     * Updates an existing BidList.
+     *
+     * @param id the ID of the BidList to update.
+     * @param bidList the BidList object with updated data.
+     * @return the updated BidList object if successful, otherwise null.
+     */
     public BidList updateBidList(Integer id, BidList bidList) {
-        // Check if the BidList exists
         if (bidListRepository.existsById(id)) {
-            bidList.setBidListId(id); // Set the ID for the entity to update
+            bidList.setBidListId(id);
             return bidListRepository.save(bidList);
         }
-        return null; // Or throw an exception
+        return null;
     }
 
-    // Delete
+    /**
+     * Deletes a BidList by its ID.
+     *
+     * @param id the ID of the BidList to delete.
+     */
     public void deleteBidList(Integer id) {
         bidListRepository.deleteById(id);
     }

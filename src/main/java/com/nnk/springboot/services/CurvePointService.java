@@ -8,37 +8,64 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for handling business logic related to CurvePoint entities.
+ */
 @Service
 public class CurvePointService {
 
     @Autowired
     private CurvePointRepository curvePointRepository;
 
-    // Create
+    /**
+     * Creates a new CurvePoint.
+     *
+     * @param curvePoint the CurvePoint object to create.
+     * @return the created CurvePoint object.
+     */
     public CurvePoint createCurvePoint(CurvePoint curvePoint) {
         return curvePointRepository.save(curvePoint);
     }
 
-    // Read all
+    /**
+     * Retrieves all CurvePoints.
+     *
+     * @return a list of all CurvePoints.
+     */
     public List<CurvePoint> getAllCurvePoints() {
         return curvePointRepository.findAll();
     }
 
-    // Read by ID
+    /**
+     * Retrieves a CurvePoint by its ID.
+     *
+     * @param id the ID of the CurvePoint to retrieve.
+     * @return an Optional containing the CurvePoint if found, otherwise empty.
+     */
     public Optional<CurvePoint> getCurvePointById(Integer id) {
         return curvePointRepository.findById(id);
     }
 
-    // Update
+    /**
+     * Updates an existing CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to update.
+     * @param curvePoint the CurvePoint object with updated data.
+     * @return the updated CurvePoint object if successful, otherwise null.
+     */
     public CurvePoint updateCurvePoint(Integer id, CurvePoint curvePoint) {
         if (curvePointRepository.existsById(id)) {
-            curvePoint.setId(id); // Set the ID for the entity to update
+            curvePoint.setId(id);
             return curvePointRepository.save(curvePoint);
         }
-        return null; // Or throw an exception
+        return null;
     }
 
-    // Delete
+    /**
+     * Deletes a CurvePoint by its ID.
+     *
+     * @param id the ID of the CurvePoint to delete.
+     */
     public void deleteCurvePoint(Integer id) {
         curvePointRepository.deleteById(id);
     }

@@ -15,21 +15,17 @@ public class HomeControllerTest {
     @InjectMocks
     private HomeController homeController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    public void testHome() {
-        Model model = mock(Model.class);
-
-        String viewName = homeController.home(model);
-
-        assertEquals("home", viewName);
-        verifyNoInteractions(model); // Vérifie qu'aucune interaction n'a eu lieu avec le modèle
-    }
-
+    /**
+     * Tests the home for Admin method of HomeController.
+     */
     @Test
     public void testAdminHome() {
         Model model = mock(Model.class);

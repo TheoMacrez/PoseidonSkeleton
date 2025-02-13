@@ -19,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for TradeService.
+ */
 public class TradeServiceTest {
 
     @InjectMocks
@@ -29,6 +32,9 @@ public class TradeServiceTest {
 
     private Trade trade;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -56,6 +62,9 @@ public class TradeServiceTest {
         trade.setSide("Test Side");
     }
 
+    /**
+     * Tests the createTrade method of TradeService.
+     */
     @Test
     public void testCreateTrade() {
         when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
@@ -66,6 +75,9 @@ public class TradeServiceTest {
         verify(tradeRepository, times(1)).save(trade);
     }
 
+    /**
+     * Tests the getAllTrades method of TradeService.
+     */
     @Test
     public void testGetAllTrades() {
         List<Trade> trades = new ArrayList<>();
@@ -79,6 +91,9 @@ public class TradeServiceTest {
         assertThat(result).contains(trade);
     }
 
+    /**
+     * Tests the getTradeById method of TradeService.
+     */
     @Test
     public void testGetTradeById() {
         when(tradeRepository.findById(1)).thenReturn(Optional.of(trade));
@@ -89,6 +104,9 @@ public class TradeServiceTest {
         assertThat(result.get()).isEqualTo(trade);
     }
 
+    /**
+     * Tests the updateTrade method of TradeService.
+     */
     @Test
     public void testUpdateTrade() {
         when(tradeRepository.existsById(1)).thenReturn(true);
@@ -100,6 +118,9 @@ public class TradeServiceTest {
         verify(tradeRepository, times(1)).save(trade);
     }
 
+    /**
+     * Tests the deleteTrade method of TradeService.
+     */
     @Test
     public void testDeleteTrade() {
         doNothing().when(tradeRepository).deleteById(1);

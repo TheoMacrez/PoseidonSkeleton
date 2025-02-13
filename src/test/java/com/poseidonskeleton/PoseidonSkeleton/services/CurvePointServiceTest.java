@@ -19,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for CurvePointService.
+ */
 public class CurvePointServiceTest {
 
     @InjectMocks
@@ -29,6 +32,9 @@ public class CurvePointServiceTest {
 
     private CurvePoint curvePoint;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -40,6 +46,9 @@ public class CurvePointServiceTest {
         curvePoint.setCreationDate(new Timestamp(System.currentTimeMillis()));
     }
 
+    /**
+     * Tests the createCurvePoint method of CurvePointService.
+     */
     @Test
     public void testCreateCurvePoint() {
         when(curvePointRepository.save(any(CurvePoint.class))).thenReturn(curvePoint);
@@ -50,6 +59,9 @@ public class CurvePointServiceTest {
         verify(curvePointRepository, times(1)).save(curvePoint);
     }
 
+    /**
+     * Tests the getAllCurvePoints method of CurvePointService.
+     */
     @Test
     public void testGetAllCurvePoints() {
         List<CurvePoint> curvePoints = new ArrayList<>();
@@ -63,6 +75,9 @@ public class CurvePointServiceTest {
         assertThat(result).contains(curvePoint);
     }
 
+    /**
+     * Tests the getCurvePointById method of CurvePointService.
+     */
     @Test
     public void testGetCurvePointById() {
         when(curvePointRepository.findById(1)).thenReturn(Optional.of(curvePoint));
@@ -73,6 +88,9 @@ public class CurvePointServiceTest {
         assertThat(result.get()).isEqualTo(curvePoint);
     }
 
+    /**
+     * Tests the updateCurvePoint method of CurvePointService.
+     */
     @Test
     public void testUpdateCurvePoint() {
         when(curvePointRepository.existsById(1)).thenReturn(true);
@@ -84,6 +102,9 @@ public class CurvePointServiceTest {
         verify(curvePointRepository, times(1)).save(curvePoint);
     }
 
+    /**
+     * Tests the deleteCurvePoint method of CurvePointService.
+     */
     @Test
     public void testDeleteCurvePoint() {
         doNothing().when(curvePointRepository).deleteById(1);

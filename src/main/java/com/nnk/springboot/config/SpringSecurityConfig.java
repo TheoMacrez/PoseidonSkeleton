@@ -18,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import com.nnk.springboot.services.UserService;
 
+/**
+ * Configuration class for Spring Security.
+ */
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
@@ -29,21 +32,45 @@ public class SpringSecurityConfig {
     @Lazy
     private UserService userService;
 
+    /**
+     * Bean to provide a PasswordEncoder for encoding passwords.
+     *
+     * @return a BCryptPasswordEncoder instance.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Bean to provide an AuthenticationService.
+     *
+     * @param passwordEncoder the PasswordEncoder to use.
+     * @return an AuthenticationService instance.
+     */
     @Bean
     public AuthenticationService authenticationService(PasswordEncoder passwordEncoder) {
         return new AuthenticationService(userService, passwordEncoder);
     }
 
+    /**
+     * Bean to provide a CustomAuthenticationProvider.
+     *
+     * @param authenticationService the AuthenticationService to use.
+     * @return a CustomAuthenticationProvider instance.
+     */
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider(AuthenticationService authenticationService) {
         return new CustomAuthenticationProvider(passwordValidationService, authenticationService);
     }
 
+    /**
+     * Bean to configure the SecurityFilterChain.
+     *
+     * @param http the HttpSecurity object to configure.
+     * @return a SecurityFilterChain instance.
+     * @throws Exception if an error occurs.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -73,10 +100,16 @@ public class SpringSecurityConfig {
                 .authenticationManager(authenticationManager(http))
                 .authenticationProvider(customAuthenticationProvider(authenticationService(passwordEncoder())));
 
-
         return http.build();
     }
 
+    /**
+     * Bean to provide an AuthenticationManager.
+     *
+     * @param http the HttpSecurity object to configure.
+     * @return an AuthenticationManager instance.
+     * @throws Exception if an error occurs.
+     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -84,11 +117,21 @@ public class SpringSecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
+    /**
+     * Bean to provide a CustomAuthenticationSuccessHandler.
+     *
+     * @return a CustomAuthenticationSuccessHandler instance.
+     */
     @Bean
     public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return new CustomAuthenticationSuccessHandler();
     }
 
+    /**
+     * Bean to configure cookie settings.
+     *
+     * @return a ServletContextInitializer instance.
+     */
     @Bean
     public ServletContextInitializer cookieConfig() {
         return servletContext -> {
@@ -97,9 +140,13 @@ public class SpringSecurityConfig {
         };
     }
 
+    /**
+     * Bean to configure GrantedAuthorityDefaults.
+     *
+     * @return a GrantedAuthorityDefaults instance.
+     */
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults(""); // Configure Spring Security to not use the "ROLE_" prefix
     }
 }
-

@@ -17,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for RuleNameService.
+ */
 public class RuleNameServiceTest {
 
     @InjectMocks
@@ -27,6 +30,9 @@ public class RuleNameServiceTest {
 
     private RuleName ruleName;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -40,6 +46,9 @@ public class RuleNameServiceTest {
         ruleName.setSqlPart("WHERE id = ?");
     }
 
+    /**
+     * Tests the createRuleName method of RuleNameService.
+     */
     @Test
     public void testCreateRuleName() {
         when(ruleNameRepository.save(any(RuleName.class))).thenReturn(ruleName);
@@ -50,6 +59,9 @@ public class RuleNameServiceTest {
         verify(ruleNameRepository, times(1)).save(ruleName);
     }
 
+    /**
+     * Tests the getAllRuleNames method of RuleNameService.
+     */
     @Test
     public void testGetAllRuleNames() {
         List<RuleName> ruleNames = new ArrayList<>();
@@ -63,6 +75,9 @@ public class RuleNameServiceTest {
         assertThat(result).contains(ruleName);
     }
 
+    /**
+     * Tests the getRuleNameById method of RuleNameService.
+     */
     @Test
     public void testGetRuleNameById() {
         when(ruleNameRepository.findById(1)).thenReturn(Optional.of(ruleName));
@@ -73,6 +88,9 @@ public class RuleNameServiceTest {
         assertThat(result.get()).isEqualTo(ruleName);
     }
 
+    /**
+     * Tests the updateRuleName method of RuleNameService.
+     */
     @Test
     public void testUpdateRuleName() {
         when(ruleNameRepository.existsById(1)).thenReturn(true);
@@ -84,6 +102,9 @@ public class RuleNameServiceTest {
         verify(ruleNameRepository, times(1)).save(ruleName);
     }
 
+    /**
+     * Tests the deleteRuleName method of RuleNameService.
+     */
     @Test
     public void testDeleteRuleName() {
         doNothing().when(ruleNameRepository).deleteById(1);

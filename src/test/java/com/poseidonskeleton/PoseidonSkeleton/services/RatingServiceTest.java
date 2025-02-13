@@ -17,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for RatingService.
+ */
 public class RatingServiceTest {
 
     @InjectMocks
@@ -27,6 +30,9 @@ public class RatingServiceTest {
 
     private Rating rating;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -38,6 +44,9 @@ public class RatingServiceTest {
         rating.setOrderNumber(1);
     }
 
+    /**
+     * Tests the createRating method of RatingService.
+     */
     @Test
     public void testCreateRating() {
         when(ratingRepository.save(any(Rating.class))).thenReturn(rating);
@@ -48,6 +57,9 @@ public class RatingServiceTest {
         verify(ratingRepository, times(1)).save(rating);
     }
 
+    /**
+     * Tests the getAllRatings method of RatingService.
+     */
     @Test
     public void testGetAllRatings() {
         List<Rating> ratings = new ArrayList<>();
@@ -61,6 +73,9 @@ public class RatingServiceTest {
         assertThat(result).contains(rating);
     }
 
+    /**
+     * Tests the getRatingById method of RatingService.
+     */
     @Test
     public void testGetRatingById() {
         when(ratingRepository.findById(1)).thenReturn(Optional.of(rating));
@@ -71,6 +86,9 @@ public class RatingServiceTest {
         assertThat(result.get()).isEqualTo(rating);
     }
 
+    /**
+     * Tests the updateRating method of RatingService.
+     */
     @Test
     public void testUpdateRating() {
         when(ratingRepository.existsById(1)).thenReturn(true);
@@ -82,6 +100,9 @@ public class RatingServiceTest {
         verify(ratingRepository, times(1)).save(rating);
     }
 
+    /**
+     * Tests the deleteRating method of RatingService.
+     */
     @Test
     public void testDeleteRating() {
         doNothing().when(ratingRepository).deleteById(1);

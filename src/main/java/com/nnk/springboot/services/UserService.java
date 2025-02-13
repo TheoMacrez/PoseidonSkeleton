@@ -15,74 +15,105 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for handling business logic related to UserDomain entities.
+ */
 @Service
 @Getter
 public class UserService implements UserDetailsService {
 
     @Autowired
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordValidationService passwordValidationService) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.passwordValidationService = passwordValidationService;
     }
-    @Autowired
-    private  PasswordValidationService passwordValidationService;
 
+    @Autowired
+    private PasswordValidationService passwordValidationService;
+
+    /**
+     * Loads a user by username.
+     *
+     * @param username the username of the user to load.
+     * @return the UserDetails object representing the user.
+     * @throws UsernameNotFoundException if the user is not found.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserDomain> userByLogin = userRepository.findByUsername(username);
         if (userByLogin.isEmpty()) {
             throw new UsernameNotFoundException("Utilisateur non trouvé avec le nom d'utilisateur " + username);
         }
-
-//        return userByLogin.map(userModel -> User.builder()
-//                .username(userModel.getUsername())
-//                .password(userModel.getPassword())
-//                .build()).orElse(null);
         return userByLogin.get();
     }
 
-
-
-    // Create and save
+    /**
+     * Saves a new user.
+     *
+     * @param user the UserDomain object to save.
+     * @return the saved UserDomain object.
+     * @throws RuntimeException if the username already exists or the password does not meet the criteria.
+     */
     @Transactional
     public UserDomain saveUser(UserDomain user) {
-        // Validation pour s'assurer que l'utilisateur n'existe pas déjà
+        // Validation to ensure the user does not already exist
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Cet Username est déjà utilisé !");
         }
-        // Validation du mot de passe
+        // Password validation
         if (!passwordValidationService.isValid(user.getPassword())) {
             throw new RuntimeException("Le mot de passe ne respecte pas les critères requis : au moins 8 caractères, une majuscule, un chiffre et un symbole.");
         }
-        // Hachage du mot de passe avant de le sauvegarder
+        // Hash the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // Read all
+    /**
+     * Retrieves all users.
+     *
+     * @return a list of all users.
+     */
     public List<UserDomain> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Read by ID
+    /**
+     * Retrieves a user by ID.
+     *
+     * @param id the ID of the user to retrieve.
+     * @return an Optional containing the user if found, otherwise empty.
+     */
     public Optional<UserDomain> getUserById(Integer id) {
         return userRepository.findById(id);
     }
 
-    // Update
+    /**
+     * Updates an existing user.
+     *
+     * @param id the ID of the user to update.
+     * @param user the UserDomain object with updated data.
+     * @return the updated UserDomain object if successful, otherwise null.
+     */
     public UserDomain updateUser(Integer id, UserDomain user) {
         if (userRepository.existsById(id)) {
-            user.setId(id); // Set the ID for the entity to update
+            user.setId(id);
             return userRepository.save(user);
         }
-        return null; // Or throw an exception
+        return null;
     }
 
-    // Delete
+    /**
+     * Deletes a user by ID.
+     *
+     * @param id the ID of the user to delete.
+     */
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }

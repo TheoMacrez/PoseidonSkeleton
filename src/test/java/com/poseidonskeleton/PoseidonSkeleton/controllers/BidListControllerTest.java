@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for BidListController.
+ */
 public class BidListControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class BidListControllerTest {
     @InjectMocks
     private BidListController bidListController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of BidListController.
+     */
     @Test
     public void testHome() {
         List<BidList> bidLists = Arrays.asList(new BidList(), new BidList());
@@ -51,18 +60,24 @@ public class BidListControllerTest {
         String viewName = bidListController.home(model, userDetails);
 
         assertEquals("bidList/list", viewName);
-        verify(model).addAttribute("bidlists", bidLists);
+        verify(model).addAttribute("bidLists", bidLists);
         verify(model).addAttribute("loggedInUser", "testUser");
     }
 
+    /**
+     * Tests the addBidForm method of BidListController.
+     */
     @Test
     public void testAddBidForm() {
         String viewName = bidListController.addBidForm(model);
 
         assertEquals("bidList/add", viewName);
-        verify(model).addAttribute(eq("bidlist"), any(BidList.class));
+        verify(model).addAttribute(eq("bidList"), any(BidList.class));
     }
 
+    /**
+     * Tests the validate method of BidListController when validation is successful.
+     */
     @Test
     public void testValidateBidSuccess() {
         BidList bid = new BidList();
@@ -74,9 +89,12 @@ public class BidListControllerTest {
 
         assertEquals("bidList/list", viewName);
         verify(bidListService).createBidList(bid);
-        verify(model).addAttribute("bidlists", bidLists);
+        verify(model).addAttribute("bidLists", bidLists);
     }
 
+    /**
+     * Tests the validate method of BidListController when validation fails.
+     */
     @Test
     public void testValidateBidFailure() {
         BidList bid = new BidList();
@@ -88,6 +106,9 @@ public class BidListControllerTest {
         verify(bidListService, never()).createBidList(any(BidList.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of BidListController when the BidList exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,9 +118,12 @@ public class BidListControllerTest {
         String viewName = bidListController.showUpdateForm(id, model);
 
         assertEquals("bidList/update", viewName);
-        verify(model).addAttribute("bidlist", bidList);
+        verify(model).addAttribute("bidList", bidList);
     }
 
+    /**
+     * Tests the showUpdateForm method of BidListController when the BidList does not exist.
+     */
     @Test
     public void testShowUpdateFormNotFound() {
         Integer id = 1;
@@ -110,6 +134,9 @@ public class BidListControllerTest {
         assertEquals("redirect:/bidList/list", viewName);
     }
 
+    /**
+     * Tests the updateBid method of BidListController when validation is successful.
+     */
     @Test
     public void testUpdateBidSuccess() {
         Integer id = 1;
@@ -122,6 +149,9 @@ public class BidListControllerTest {
         verify(bidListService).updateBidList(id, bidList);
     }
 
+    /**
+     * Tests the updateBid method of BidListController when validation fails.
+     */
     @Test
     public void testUpdateBidFailure() {
         Integer id = 1;
@@ -134,6 +164,9 @@ public class BidListControllerTest {
         verify(bidListService, never()).updateBidList(anyInt(), any(BidList.class));
     }
 
+    /**
+     * Tests the deleteBid method of BidListController.
+     */
     @Test
     public void testDeleteBid() {
         Integer id = 1;

@@ -17,6 +17,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for LoginController.
+ */
 public class LoginControllerTest {
 
     @Mock
@@ -25,11 +28,17 @@ public class LoginControllerTest {
     @InjectMocks
     private LoginController loginController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the login method of LoginController with a null expired parameter.
+     */
     @Test
     public void testLogin() {
         ModelAndView mav = loginController.login(null);
@@ -38,6 +47,9 @@ public class LoginControllerTest {
         assertEquals(null, mav.getModel().get("errorMsg"));
     }
 
+    /**
+     * Tests the login method of LoginController with an expired session.
+     */
     @Test
     public void testLoginWithExpiredSession() {
         ModelAndView mav = loginController.login("true");
@@ -46,6 +58,9 @@ public class LoginControllerTest {
         assertEquals("Votre session a expiré. Veuillez vous reconnecter.", mav.getModel().get("errorMsg"));
     }
 
+    /**
+     * Tests the getAllUserArticles method of LoginController.
+     */
     @Test
     public void testGetAllUserArticles() {
         List<UserDomain> users = Arrays.asList(new UserDomain(), new UserDomain());
@@ -57,6 +72,9 @@ public class LoginControllerTest {
         assertEquals(users, mav.getModel().get("users"));
     }
 
+    /**
+     * Tests the error method of LoginController.
+     */
     @Test
     public void testError() {
         ModelAndView mav = loginController.error();
@@ -65,6 +83,9 @@ public class LoginControllerTest {
         assertEquals("You are not authorized for the requested data.", mav.getModel().get("errorMsg"));
     }
 
+    /**
+     * Tests the logoutPage method of LoginController.
+     */
     @Test
     public void testLogoutPage() {
         Model model = mock(Model.class);
@@ -75,4 +96,3 @@ public class LoginControllerTest {
         verify(model).addAttribute("message", "You are disconnected.");
     }
 }
-

@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for UserController.
+ */
 public class UserControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of UserController.
+     */
     @Test
     public void testHome() {
         List<UserDomain> users = Arrays.asList(new UserDomain(), new UserDomain());
@@ -53,6 +62,9 @@ public class UserControllerTest {
         verify(model).addAttribute("users", users);
     }
 
+    /**
+     * Tests the addUser method of UserController.
+     */
     @Test
     public void testAddUser() {
         String viewName = userController.addUser(model);
@@ -61,6 +73,9 @@ public class UserControllerTest {
         verify(model).addAttribute(eq("user"), any(UserDomain.class));
     }
 
+    /**
+     * Tests the validate method of UserController when validation is successful.
+     */
     @Test
     public void testValidateUserSuccess() {
         UserDomain user = new UserDomain();
@@ -74,6 +89,9 @@ public class UserControllerTest {
         verify(model).addAttribute(eq("users"), anyList());
     }
 
+    /**
+     * Tests the validate method of UserController when validation fails.
+     */
     @Test
     public void testValidateUserFailure() {
         UserDomain user = new UserDomain();
@@ -85,6 +103,9 @@ public class UserControllerTest {
         verify(userRepository, never()).save(any(UserDomain.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of UserController when the user exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,6 +118,9 @@ public class UserControllerTest {
         verify(model).addAttribute("user", user);
     }
 
+    /**
+     * Tests the updateUser method of UserController when validation is successful.
+     */
     @Test
     public void testUpdateUser() {
         Integer id = 1;
@@ -111,6 +135,9 @@ public class UserControllerTest {
         verify(model).addAttribute(eq("users"), anyList());
     }
 
+    /**
+     * Tests the deleteUser method of UserController.
+     */
     @Test
     public void testDeleteUser() {
         Integer id = 1;
@@ -124,4 +151,3 @@ public class UserControllerTest {
         verify(model).addAttribute(eq("users"), anyList());
     }
 }
-

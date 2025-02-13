@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for TradeController.
+ */
 public class TradeControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class TradeControllerTest {
     @InjectMocks
     private TradeController tradeController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of TradeController.
+     */
     @Test
     public void testHome() {
         List<Trade> trades = Arrays.asList(new Trade(), new Trade());
@@ -55,6 +64,9 @@ public class TradeControllerTest {
         verify(model).addAttribute("loggedInUser", "testUser");
     }
 
+    /**
+     * Tests the addTradeForm method of TradeController.
+     */
     @Test
     public void testAddTradeForm() {
         String viewName = tradeController.addTradeForm(model);
@@ -63,6 +75,9 @@ public class TradeControllerTest {
         verify(model).addAttribute(eq("trade"), any(Trade.class));
     }
 
+    /**
+     * Tests the validate method of TradeController when validation is successful.
+     */
     @Test
     public void testValidateTradeSuccess() {
         Trade trade = new Trade();
@@ -74,6 +89,9 @@ public class TradeControllerTest {
         verify(tradeService).createTrade(trade);
     }
 
+    /**
+     * Tests the validate method of TradeController when validation fails.
+     */
     @Test
     public void testValidateTradeFailure() {
         Trade trade = new Trade();
@@ -85,6 +103,9 @@ public class TradeControllerTest {
         verify(tradeService, never()).createTrade(any(Trade.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of TradeController when the Trade exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,6 +118,9 @@ public class TradeControllerTest {
         verify(model).addAttribute("trade", trade);
     }
 
+    /**
+     * Tests the showUpdateForm method of TradeController when the Trade does not exist.
+     */
     @Test
     public void testShowUpdateFormNotFound() {
         Integer id = 1;
@@ -107,6 +131,9 @@ public class TradeControllerTest {
         assertEquals("redirect:/trade/list", viewName);
     }
 
+    /**
+     * Tests the updateTrade method of TradeController when validation is successful.
+     */
     @Test
     public void testUpdateTradeSuccess() {
         Integer id = 1;
@@ -119,6 +146,9 @@ public class TradeControllerTest {
         verify(tradeService).updateTrade(id, trade);
     }
 
+    /**
+     * Tests the updateTrade method of TradeController when validation fails.
+     */
     @Test
     public void testUpdateTradeFailure() {
         Integer id = 1;
@@ -131,6 +161,9 @@ public class TradeControllerTest {
         verify(tradeService, never()).updateTrade(anyInt(), any(Trade.class));
     }
 
+    /**
+     * Tests the deleteTrade method of TradeController.
+     */
     @Test
     public void testDeleteTrade() {
         Integer id = 1;
@@ -141,4 +174,3 @@ public class TradeControllerTest {
         verify(tradeService).deleteTrade(id);
     }
 }
-

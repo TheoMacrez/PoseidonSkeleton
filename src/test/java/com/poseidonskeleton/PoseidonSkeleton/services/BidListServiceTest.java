@@ -18,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for BidListService.
+ */
 public class BidListServiceTest {
 
     @InjectMocks
@@ -28,6 +31,9 @@ public class BidListServiceTest {
 
     private BidList bidList;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -35,9 +41,11 @@ public class BidListServiceTest {
         bidList.setBidListId(1);
         bidList.setAccount("Test Account");
         bidList.setBidQuantity(BigDecimal.valueOf(100));
-        // Initialisez d'autres attributs si nécessaire
     }
 
+    /**
+     * Tests the createBidList method of BidListService.
+     */
     @Test
     public void testCreateBidList() {
         when(bidListRepository.save(any(BidList.class))).thenReturn(bidList);
@@ -48,6 +56,9 @@ public class BidListServiceTest {
         verify(bidListRepository, times(1)).save(bidList);
     }
 
+    /**
+     * Tests the getAllBidLists method of BidListService.
+     */
     @Test
     public void testGetAllBidLists() {
         List<BidList> bidLists = new ArrayList<>();
@@ -61,6 +72,9 @@ public class BidListServiceTest {
         assertThat(result).contains(bidList);
     }
 
+    /**
+     * Tests the getBidListById method of BidListService.
+     */
     @Test
     public void testGetBidListById() {
         when(bidListRepository.findById(1)).thenReturn(Optional.of(bidList));
@@ -71,6 +85,9 @@ public class BidListServiceTest {
         assertThat(result.get()).isEqualTo(bidList);
     }
 
+    /**
+     * Tests the updateBidList method of BidListService.
+     */
     @Test
     public void testUpdateBidList() {
         when(bidListRepository.existsById(1)).thenReturn(true);
@@ -82,6 +99,9 @@ public class BidListServiceTest {
         verify(bidListRepository, times(1)).save(bidList);
     }
 
+    /**
+     * Tests the deleteBidList method of BidListService.
+     */
     @Test
     public void testDeleteBidList() {
         doNothing().when(bidListRepository).deleteById(1);

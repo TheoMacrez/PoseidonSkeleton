@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for RatingController.
+ */
 public class RatingControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class RatingControllerTest {
     @InjectMocks
     private RatingController ratingController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of RatingController.
+     */
     @Test
     public void testHome() {
         List<Rating> ratings = Arrays.asList(new Rating(), new Rating());
@@ -55,6 +64,9 @@ public class RatingControllerTest {
         verify(model).addAttribute("loggedInUser", "testUser");
     }
 
+    /**
+     * Tests the addRatingForm method of RatingController.
+     */
     @Test
     public void testAddRatingForm() {
         String viewName = ratingController.addRatingForm(model);
@@ -63,6 +75,9 @@ public class RatingControllerTest {
         verify(model).addAttribute(eq("rating"), any(Rating.class));
     }
 
+    /**
+     * Tests the validate method of RatingController when validation is successful.
+     */
     @Test
     public void testValidateRatingSuccess() {
         Rating rating = new Rating();
@@ -74,6 +89,9 @@ public class RatingControllerTest {
         verify(ratingService).createRating(rating);
     }
 
+    /**
+     * Tests the validate method of RatingController when validation fails.
+     */
     @Test
     public void testValidateRatingFailure() {
         Rating rating = new Rating();
@@ -85,6 +103,9 @@ public class RatingControllerTest {
         verify(ratingService, never()).createRating(any(Rating.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of RatingController when the Rating exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,6 +118,9 @@ public class RatingControllerTest {
         verify(model).addAttribute("rating", rating);
     }
 
+    /**
+     * Tests the showUpdateForm method of RatingController when the Rating does not exist.
+     */
     @Test
     public void testShowUpdateFormNotFound() {
         Integer id = 1;
@@ -107,6 +131,9 @@ public class RatingControllerTest {
         assertEquals("redirect:/rating/list", viewName);
     }
 
+    /**
+     * Tests the updateRating method of RatingController when validation is successful.
+     */
     @Test
     public void testUpdateRatingSuccess() {
         Integer id = 1;
@@ -119,6 +146,9 @@ public class RatingControllerTest {
         verify(ratingService).updateRating(id, rating);
     }
 
+    /**
+     * Tests the updateRating method of RatingController when validation fails.
+     */
     @Test
     public void testUpdateRatingFailure() {
         Integer id = 1;
@@ -131,6 +161,9 @@ public class RatingControllerTest {
         verify(ratingService, never()).updateRating(anyInt(), any(Rating.class));
     }
 
+    /**
+     * Tests the deleteRating method of RatingController.
+     */
     @Test
     public void testDeleteRating() {
         Integer id = 1;

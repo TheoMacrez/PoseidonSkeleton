@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for RuleNameController.
+ */
 public class RuleNameControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class RuleNameControllerTest {
     @InjectMocks
     private RuleNameController ruleNameController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of RuleNameController.
+     */
     @Test
     public void testHome() {
         List<RuleName> ruleNames = Arrays.asList(new RuleName(), new RuleName());
@@ -55,6 +64,9 @@ public class RuleNameControllerTest {
         verify(model).addAttribute("loggedInUser", "testUser");
     }
 
+    /**
+     * Tests the addRuleForm method of RuleNameController.
+     */
     @Test
     public void testAddRuleForm() {
         String viewName = ruleNameController.addRuleForm(model);
@@ -63,6 +75,9 @@ public class RuleNameControllerTest {
         verify(model).addAttribute(eq("ruleName"), any(RuleName.class));
     }
 
+    /**
+     * Tests the validate method of RuleNameController when validation is successful.
+     */
     @Test
     public void testValidateRuleNameSuccess() {
         RuleName ruleName = new RuleName();
@@ -74,6 +89,9 @@ public class RuleNameControllerTest {
         verify(ruleNameService).createRuleName(ruleName);
     }
 
+    /**
+     * Tests the validate method of RuleNameController when validation fails.
+     */
     @Test
     public void testValidateRuleNameFailure() {
         RuleName ruleName = new RuleName();
@@ -85,6 +103,9 @@ public class RuleNameControllerTest {
         verify(ruleNameService, never()).createRuleName(any(RuleName.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of RuleNameController when the RuleName exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,6 +118,9 @@ public class RuleNameControllerTest {
         verify(model).addAttribute("ruleName", ruleName);
     }
 
+    /**
+     * Tests the showUpdateForm method of RuleNameController when the RuleName does not exist.
+     */
     @Test
     public void testShowUpdateFormNotFound() {
         Integer id = 1;
@@ -107,6 +131,9 @@ public class RuleNameControllerTest {
         assertEquals("redirect:/ruleName/list", viewName);
     }
 
+    /**
+     * Tests the updateRuleName method of RuleNameController when validation is successful.
+     */
     @Test
     public void testUpdateRuleNameSuccess() {
         Integer id = 1;
@@ -119,6 +146,9 @@ public class RuleNameControllerTest {
         verify(ruleNameService).updateRuleName(id, ruleName);
     }
 
+    /**
+     * Tests the updateRuleName method of RuleNameController when validation fails.
+     */
     @Test
     public void testUpdateRuleNameFailure() {
         Integer id = 1;
@@ -131,6 +161,9 @@ public class RuleNameControllerTest {
         verify(ruleNameService, never()).updateRuleName(anyInt(), any(RuleName.class));
     }
 
+    /**
+     * Tests the deleteRuleName method of RuleNameController.
+     */
     @Test
     public void testDeleteRuleName() {
         Integer id = 1;

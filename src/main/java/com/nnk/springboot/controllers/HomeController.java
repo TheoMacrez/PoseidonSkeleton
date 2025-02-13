@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController
 {
-//	@RequestMapping("/")
-//	public String home(Model model)
-//	{
-//		return "redirect:/bidList/list";
-//	}
 
+
+	/**
+	 * Handles the request to display the redirect home page for admin.
+	 *
+	 * @param model the Model object to add attributes.
+	 *
+	 * @return the view name for the BidList list page.
+	 */
 	@RequestMapping("/admin/home")
 	public String adminHome(Model model)
 	{

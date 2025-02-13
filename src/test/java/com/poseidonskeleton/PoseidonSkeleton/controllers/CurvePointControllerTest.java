@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for CurvePointController.
+ */
 public class CurvePointControllerTest {
 
     @Mock
@@ -37,11 +40,17 @@ public class CurvePointControllerTest {
     @InjectMocks
     private CurvePointController curvePointController;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the home method of CurvePointController.
+     */
     @Test
     public void testHome() {
         List<CurvePoint> curvePoints = Arrays.asList(new CurvePoint(), new CurvePoint());
@@ -55,6 +64,9 @@ public class CurvePointControllerTest {
         verify(model).addAttribute("loggedInUser", "testUser");
     }
 
+    /**
+     * Tests the addCurvePointForm method of CurvePointController.
+     */
     @Test
     public void testAddCurvePointForm() {
         String viewName = curvePointController.addCurvePointForm(model);
@@ -63,6 +75,9 @@ public class CurvePointControllerTest {
         verify(model).addAttribute(eq("curvePoint"), any(CurvePoint.class));
     }
 
+    /**
+     * Tests the validate method of CurvePointController when validation is successful.
+     */
     @Test
     public void testValidateCurvePointSuccess() {
         CurvePoint curvePoint = new CurvePoint();
@@ -74,6 +89,9 @@ public class CurvePointControllerTest {
         verify(curvePointService).createCurvePoint(curvePoint);
     }
 
+    /**
+     * Tests the validate method of CurvePointController when validation fails.
+     */
     @Test
     public void testValidateCurvePointFailure() {
         CurvePoint curvePoint = new CurvePoint();
@@ -85,6 +103,9 @@ public class CurvePointControllerTest {
         verify(curvePointService, never()).createCurvePoint(any(CurvePoint.class));
     }
 
+    /**
+     * Tests the showUpdateForm method of CurvePointController when the CurvePoint exists.
+     */
     @Test
     public void testShowUpdateForm() {
         Integer id = 1;
@@ -97,6 +118,9 @@ public class CurvePointControllerTest {
         verify(model).addAttribute("curvePoint", curvePoint);
     }
 
+    /**
+     * Tests the showUpdateForm method of CurvePointController when the CurvePoint does not exist.
+     */
     @Test
     public void testShowUpdateFormNotFound() {
         Integer id = 1;
@@ -107,6 +131,9 @@ public class CurvePointControllerTest {
         assertEquals("redirect:/curvePoint/list", viewName);
     }
 
+    /**
+     * Tests the updateCurvePoint method of CurvePointController when validation is successful.
+     */
     @Test
     public void testUpdateCurvePointSuccess() {
         Integer id = 1;
@@ -119,6 +146,9 @@ public class CurvePointControllerTest {
         verify(curvePointService).updateCurvePoint(id, curvePoint);
     }
 
+    /**
+     * Tests the updateCurvePoint method of CurvePointController when validation fails.
+     */
     @Test
     public void testUpdateCurvePointFailure() {
         Integer id = 1;
@@ -131,6 +161,9 @@ public class CurvePointControllerTest {
         verify(curvePointService, never()).updateCurvePoint(anyInt(), any(CurvePoint.class));
     }
 
+    /**
+     * Tests the deleteCurvePoint method of CurvePointController.
+     */
     @Test
     public void testDeleteCurvePoint() {
         Integer id = 1;
