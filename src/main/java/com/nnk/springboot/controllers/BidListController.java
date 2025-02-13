@@ -28,7 +28,7 @@ public class BidListController {
     @RequestMapping("/bidList/list")
     public String home(Model model, @AuthenticationPrincipal UserDetails userDetails)
     {
-        model.addAttribute("bidlists", bidListService.getAllBidLists());
+        model.addAttribute("bidLists", bidListService.getAllBidLists());
         if (userDetails != null) {
             model.addAttribute("loggedInUser", userDetails.getUsername());
         }
@@ -38,7 +38,7 @@ public class BidListController {
     @GetMapping("/bidList/add")
     public String addBidForm(Model model) {
 
-        model.addAttribute("bidlist",new BidList());
+        model.addAttribute("bidList",new BidList());
         return "bidList/add";
     }
 
@@ -50,7 +50,7 @@ public class BidListController {
         }
         bidListService.createBidList(bid);
 
-        model.addAttribute("bidlists", bidListService.getAllBidLists());
+        model.addAttribute("bidLists", bidListService.getAllBidLists());
 
         return "bidList/list";
     }
@@ -59,7 +59,7 @@ public class BidListController {
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Optional<BidList> bidList = bidListService.getBidListById(id);
         if (bidList.isPresent()) {
-            model.addAttribute("bidlist", bidList.get());
+            model.addAttribute("bidList", bidList.get());
             return "bidList/update"; // Afficher le formulaire de mise à jour
         }
         return "redirect:/bidList/list"; // Rediriger si le BidList n'existe pas

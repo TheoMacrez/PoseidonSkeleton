@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.services.CurvePointService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +18,7 @@ import jakarta.validation.Valid;
 import java.util.Optional;
 
 @Controller
-public class CurveController {
+public class CurvePointController {
     @Autowired
     private CurvePointService curvePointService;
 
@@ -34,15 +33,20 @@ public class CurveController {
 
     @GetMapping("/curvePoint/add")
     public String addCurvePointForm(Model model) {
-        model.addAttribute("curvePoint", new CurvePoint()); // Ajouter un nouvel objet CurvePoint au modèle
+        CurvePoint curvePoint = new CurvePoint();
+        curvePoint.setCurveId(0); // Initialiser curveId avec une valeur par défaut
+        model.addAttribute("curvePoint", curvePoint);
         return "curvePoint/add";
     }
 
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            System.out.println("Test");
             return "curvePoint/add"; // Retourner au formulaire en cas d'erreur
         }
+        model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
+
         curvePointService.createCurvePoint(curvePoint); // Sauvegarder le CurvePoint
         return "redirect:/curvePoint/list"; // Rediriger vers la liste après ajout
     }

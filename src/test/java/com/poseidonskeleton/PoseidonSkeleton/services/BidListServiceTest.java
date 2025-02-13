@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class BidListServiceTest {
         bidList = new BidList();
         bidList.setBidListId(1);
         bidList.setAccount("Test Account");
-        bidList.setBidQuantity(100.0);
+        bidList.setBidQuantity(BigDecimal.valueOf(100));
         // Initialisez d'autres attributs si nécessaire
     }
 

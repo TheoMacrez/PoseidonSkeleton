@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,8 @@ public class CurvePointServiceTest {
         curvePoint = new CurvePoint();
         curvePoint.setId(1);
         curvePoint.setCurveId(1);
-        curvePoint.setTerm(5.0);
-        curvePoint.setValue(100.0);
+        curvePoint.setTerm(BigDecimal.valueOf(5.0));
+        curvePoint.setValue(BigDecimal.valueOf(100.0));
         curvePoint.setCreationDate(new Timestamp(System.currentTimeMillis()));
     }
 

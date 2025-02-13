@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,8 +49,8 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/app/login", "/user/create").permitAll()
-                        .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**","/user/validate").hasRole("ADMIN")
+                        .requestMatchers("/app/login").permitAll()
+                        .requestMatchers("/user/list", "/user/add", "/user/update/**", "/user/delete/**","/user/validate", "secure/article-details").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -60,6 +61,7 @@ public class SpringSecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/app/logout")
                         .invalidateHttpSession(true)
+                        .permitAll()
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"))
                 .sessionManagement(session -> session
@@ -93,6 +95,11 @@ public class SpringSecurityConfig {
             servletContext.getSessionCookieConfig().setHttpOnly(true);
             servletContext.getSessionCookieConfig().setSecure(true);
         };
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // Configure Spring Security to not use the "ROLE_" prefix
     }
 }
 

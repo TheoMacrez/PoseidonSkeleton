@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +36,10 @@ public class TradeServiceTest {
         trade.setTradeId(1);
         trade.setAccount("Test Account");
         trade.setType("Test Type");
-        trade.setBuyQuantity(100.0);
-        trade.setSellQuantity(50.0);
-        trade.setBuyPrice(10.0);
-        trade.setSellPrice(15.0);
+        trade.setBuyQuantity(BigDecimal.valueOf(100.0));
+        trade.setSellQuantity(BigDecimal.valueOf(50.0));
+        trade.setBuyPrice(BigDecimal.valueOf(10.0));
+        trade.setSellPrice(BigDecimal.valueOf(15.0));
         trade.setBenchmark("Test Benchmark");
         trade.setTradeDate(new Timestamp(System.currentTimeMillis()));
         trade.setSecurity("Test Security");
