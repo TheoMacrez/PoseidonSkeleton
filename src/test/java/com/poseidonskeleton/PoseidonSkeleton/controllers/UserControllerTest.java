@@ -3,6 +3,8 @@ package com.poseidonskeleton.PoseidonSkeleton.controllers;
 import com.nnk.springboot.controllers.UserController;
 import com.nnk.springboot.domain.UserDomain;
 import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.services.PasswordValidationService;
+import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,7 +31,12 @@ public class UserControllerTest {
     private UserRepository userRepository;
 
     @Mock
+    private UserService userService;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private PasswordValidationService passwordValidationService;
 
     @Mock
     private Model model;
@@ -79,15 +86,24 @@ public class UserControllerTest {
     @Test
     public void testValidateUserSuccess() {
         UserDomain user = new UserDomain();
+        user.setUsername("testUser");
+        user.setPassword("ValidPassword1!");
+        user.setFullname("Test User");
+        user.setRole("USER");
+
         when(bindingResult.hasErrors()).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(passwordValidationService.isValid(anyString())).thenReturn(true);
+        when(userService.saveUser(any(UserDomain.class))).thenReturn(user); // Simulez la sauvegarde réussie
 
         String viewName = userController.validate(user, bindingResult, model);
 
         assertEquals("redirect:/user/list", viewName);
-        verify(userRepository).save(user);
+        verify(userService).saveUser(any(UserDomain.class)); // Vérifiez que la méthode a été appelée
         verify(model).addAttribute(eq("users"), anyList());
     }
+
+
 
     /**
      * Tests the validate method of UserController when validation fails.
@@ -125,15 +141,23 @@ public class UserControllerTest {
     public void testUpdateUser() {
         Integer id = 1;
         UserDomain user = new UserDomain();
+        user.setId(id);
+        user.setUsername("updatedUser");
+        user.setPassword("newPassword");
+        user.setFullname("Updated User");
+        user.setRole("USER");
+
         when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.updateUser(eq(id), any(UserDomain.class))).thenReturn(user); // Simulez la mise à jour réussie
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
         String viewName = userController.updateUser(id, user, bindingResult, model);
 
         assertEquals("redirect:/user/list", viewName);
-        verify(userRepository).save(user);
+        verify(userService).updateUser(eq(id), any(UserDomain.class)); // Vérifiez que la méthode a été appelée
         verify(model).addAttribute(eq("users"), anyList());
     }
+
 
     /**
      * Tests the deleteUser method of UserController.
@@ -150,4 +174,6 @@ public class UserControllerTest {
         verify(userRepository).delete(user);
         verify(model).addAttribute(eq("users"), anyList());
     }
+
+
 }

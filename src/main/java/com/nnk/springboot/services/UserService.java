@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -66,6 +67,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Cet Username est déjà utilisé !");
         }
+
         // Password validation
         if (!passwordValidationService.isValid(user.getPassword())) {
             throw new RuntimeException("Le mot de passe ne respecte pas les critères requis : au moins 8 caractères, une majuscule, un chiffre et un symbole.");
@@ -101,8 +103,23 @@ public class UserService implements UserDetailsService {
      * @param user the UserDomain object with updated data.
      * @return the updated UserDomain object if successful, otherwise null.
      */
+    @Transactional
     public UserDomain updateUser(Integer id, UserDomain user) {
         if (userRepository.existsById(id)) {
+
+            Optional<UserDomain> userDomain = getUserById(id);
+            if(!Objects.equals(userDomain.get().getUsername(), user.getUsername()))
+            {
+                // Validation to ensure the user does not already exist
+                if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+                    throw new RuntimeException("Cet Username est déjà utilisé !");
+                }
+            }
+
+            // Password validation
+            if (!passwordValidationService.isValid(user.getPassword())) {
+                throw new RuntimeException("Le mot de passe ne respecte pas les critères requis : au moins 8 caractères, une majuscule, un chiffre et un symbole.");
+            }
             user.setId(id);
             return userRepository.save(user);
         }

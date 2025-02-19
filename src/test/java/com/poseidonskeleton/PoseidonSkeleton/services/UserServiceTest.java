@@ -103,14 +103,33 @@ public class UserServiceTest {
      */
     @Test
     public void testUpdateUser() {
-        when(userRepository.existsById(1)).thenReturn(true);
-        when(userRepository.save(any(UserDomain.class))).thenReturn(user);
+        Integer id = 1;
+        UserDomain existingUser = new UserDomain();
+        existingUser.setId(id);
+        existingUser.setUsername("existingUser");
+        existingUser.setPassword("oldPassword");
+        existingUser.setFullname("Existing User");
+        existingUser.setRole("USER");
 
-        UserDomain updatedUser = userService.updateUser(1, user);
+        UserDomain updatedUser = new UserDomain();
+        updatedUser.setUsername("updatedUser");
+        updatedUser.setPassword("newPassword");
+        updatedUser.setFullname("Updated User");
+        updatedUser.setRole("USER");
 
-        assertThat(updatedUser).isEqualTo(user);
-        verify(userRepository, times(1)).save(user);
+        // Simuler l'existence de l'utilisateur
+        when(userRepository.existsById(id)).thenReturn(true);
+        when(userRepository.findById(id)).thenReturn(Optional.of(existingUser)); // Simulez la récupération de l'utilisateur existant
+        when(userRepository.findByUsername(updatedUser.getUsername())).thenReturn(Optional.empty());
+        when(passwordValidationService.isValid(anyString())).thenReturn(true);
+        when(userRepository.save(any(UserDomain.class))).thenReturn(updatedUser);
+
+        UserDomain result = userService.updateUser(id, updatedUser);
+
+        assertThat(result).isEqualTo(updatedUser);
+        verify(userRepository, times(1)).save(updatedUser);
     }
+
 
     /**
      * Tests the deleteUser method of UserService.

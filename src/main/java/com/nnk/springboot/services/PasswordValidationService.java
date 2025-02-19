@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class PasswordValidationService {
 
     private static final String PASSWORD_PATTERN =
-            "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*#?&]{8,}$";
 
     /**
      * Validates a password against a predefined pattern.
@@ -20,6 +20,7 @@ public class PasswordValidationService {
      * @return true if the password matches the pattern, otherwise false.
      */
     public boolean isValid(String password) {
+
         return Pattern.matches(PASSWORD_PATTERN, password);
     }
 }

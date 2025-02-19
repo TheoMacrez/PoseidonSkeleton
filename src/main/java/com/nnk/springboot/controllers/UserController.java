@@ -2,12 +2,15 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.UserDomain;
 import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.services.PasswordValidationService;
+import com.nnk.springboot.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +28,13 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PasswordValidationService passwordValidationService;
 
     /**
      * Handles the request to display the list of users.
@@ -62,19 +71,17 @@ public class UserController {
     @PostMapping("/user/validate")
     public String validate(@Valid UserDomain user, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            System.out.println("Validation errors: " + result.getAllErrors());
+            model.addAttribute("user", user);
             return "user/add";
         }
 
-        // Hash the password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         // Save the user
         try {
-            userRepository.save(user);
+            userService.saveUser(user);
         } catch (Exception e) {
             System.out.println("Error saving user: " + e.getMessage());
             result.reject("error.user", "Could not save user. Please try again.");
+            model.addAttribute("user", user);
             return "user/add";
         }
 
@@ -110,12 +117,23 @@ public class UserController {
     public String updateUser(@PathVariable("id") Integer id, @Valid UserDomain user,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
+            user.setPassword("");
+            model.addAttribute("user", user);
             return "user/update";
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setId(id);
-        userRepository.save(user);
+
+        // Save the user
+        try {
+            userService.updateUser(user.getId(),user);
+        } catch (Exception e) {
+            System.out.println("Error saving user: " + e.getMessage());
+            result.reject("error.user", "Could not save user. Please try again.");
+            user.setPassword("");
+            model.addAttribute("user", user);
+            return "user/update";
+        }
         model.addAttribute("users", userRepository.findAll());
         return "redirect:/user/list";
     }
